@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function Login() {
   const [email, setEmail] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [code, setCode] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "verifying" | "error">("idle");
   const [message, setMessage] = useState("");
 
   async function submit(e: React.FormEvent) {
@@ -26,11 +27,39 @@ export default function Login() {
     }
   }
 
+  // Le code du mail sert dans l'app installée : sur iPhone, le lien s'ouvrirait dans Safari
+  async function verify(e: React.FormEvent) {
+    e.preventDefault();
+    setState("verifying");
+    const { error } = await createClient().auth.verifyOtp({ email, token: code.trim(), type: "email" });
+    if (error) {
+      setState("sent");
+      setMessage("Code invalide ou expiré.");
+    } else {
+      window.location.assign("/admin");
+    }
+  }
+
   return (
     <main className="page login">
       <h1 className="title small">Codex</h1>
-      {state === "sent" ? (
-        <p>Lien envoyé à {email}. Ouvre-le sur cet appareil pour te connecter.</p>
+      {state === "sent" || state === "verifying" ? (
+        <form onSubmit={verify}>
+          <p>Mail envoyé à {email}. Ouvre le lien, ou tape ici le code reçu.</p>
+          <label>
+            Code
+            <input
+              required
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="[0-9]{6,10}"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </label>
+          <button disabled={state === "verifying"}>{state === "verifying" ? "Vérification…" : "Se connecter"}</button>
+          {message && <p className="error">{message}</p>}
+        </form>
       ) : (
         <form onSubmit={submit}>
           <label>

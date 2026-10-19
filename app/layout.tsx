@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, Grenze_Gotisch } from "next/font/google";
 import { Sky } from "@/components/Sky";
 import "./globals.css";
@@ -17,7 +17,10 @@ const body = Chakra_Petch({
 export const metadata: Metadata = {
   title: "Codex – Gabin Clavier",
   description: "Films, séries, anime, manga et jeux : ce que je suis et où j’en suis.",
+  appleWebApp: { capable: true, title: "Codex", statusBarStyle: "black" },
 };
+
+export const viewport: Viewport = { themeColor: "#06051a" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
