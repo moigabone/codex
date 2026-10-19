@@ -10,9 +10,9 @@ export async function SiteNav({ current }: { current?: "codex" | "admin" }) {
       <span>Gabin Clavier</span>
       <div>
         <Link href="/" aria-current={current === "codex" ? "page" : undefined}>Codex</Link>
-        {(signedIn || current === "admin") && (
-          <Link href="/admin" aria-current={current === "admin" ? "page" : undefined}>Gérer</Link>
-        )}
+        <Link href="/admin" aria-current={current === "admin" ? "page" : undefined}>
+          {signedIn || current === "admin" ? "Gérer" : "Connexion"}
+        </Link>
       </div>
     </nav>
   );
