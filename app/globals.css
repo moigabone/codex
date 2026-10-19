@@ -1,0 +1,318 @@
+/* Codex Nuit : grimoire sous un ciel cosmique (dark fantasy) traversé de néons (cyberpunk) */
+:root {
+  --night: #06051a;      /* fond */
+  --panel: rgb(8 7 34 / 0.82); /* surfaces translucides */
+  --well: #0d0b3d;       /* boutons secondaires */
+  --seam: #34338a;       /* bordures */
+  --seam-soft: #24226a;  /* séparateurs de liste */
+  --text: #ecebff;
+  --bright: #f4f1ff;     /* titres de section */
+  --ash: #b9b6e6;        /* texte secondaire */
+  --mist: #c9c6ec;
+  --parchment: #ffeccc;  /* grand titre */
+  --gilt: #ffd36a;       /* or : actions, surtitres, notes */
+  --neon: #ff2fa8;       /* progression, onglet actif */
+  --rose: #ff9ad8;       /* texte de progression */
+  --link: #9fb0ff;
+  --hover: #ff7ad0;
+  --blood: #ff6a7a;      /* erreurs, suppression */
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--night);
+  color: var(--text);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--hover); }
+:focus-visible { outline: 2px solid var(--gilt); outline-offset: 3px; }
+
+/* Ciel animé derrière l'en-tête, fondu vers le bas */
+.site { position: relative; min-height: 100vh; overflow: hidden; }
+.sky {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 860px;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+}
+.page { position: relative; z-index: 2; max-width: 74rem; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; }
+
+/* Navigation et filtres : soulignement néon pour l'élément actif */
+.site-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.site-nav > span { color: var(--mist); }
+.site-nav div { display: flex; gap: 1.5rem; }
+.site-nav a, .filters a { color: var(--ash); padding: 0.3rem 0; border-bottom: 2px solid transparent; }
+.site-nav a:hover, .filters a:hover { color: #fff; }
+.site-nav a[aria-current="page"], .filters a[aria-current="page"] { color: #fff; border-bottom-color: var(--neon); }
+
+/* En-tête : le titre gothique illuminé est l'élément fort du site */
+.eyebrow {
+  margin: 0 0 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--gilt);
+  text-shadow: 2px 2px 0 var(--night);
+}
+.masthead { padding: 6.5rem 0 0; max-width: 40rem; min-height: 540px; }
+.title {
+  font-family: var(--font-display), serif;
+  font-weight: 900;
+  font-size: clamp(5rem, 17vw, 11rem);
+  line-height: 0.8;
+  margin: 0;
+  color: var(--parchment);
+  text-shadow: 0 0 18px #6d7bff, 0 0 50px #3a3cff, 0 0 90px var(--neon);
+}
+.title.small { font-size: 5rem; }
+.lede {
+  margin: 1.75rem 0 0;
+  max-width: 30ch;
+  font-size: 1.15rem;
+  color: #e4e2ff;
+  text-shadow: 0 2px 0 var(--night), 0 0 12px var(--night);
+  text-wrap: pretty;
+}
+
+.filters {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.75rem;
+  padding: 0.85rem 1.1rem;
+  margin: 2rem 0 3.5rem;
+  background: var(--panel);
+  border: 1px solid var(--seam);
+  backdrop-filter: blur(4px);
+}
+.filters a { font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+
+/* Étagères par statut, chacune avec sa couleur */
+.shelf { --accent: var(--ash); margin-bottom: 4rem; }
+.shelf[data-status="en_cours"] { --accent: #ff7ad0; }
+.shelf[data-status="en_pause"] { --accent: #b9a8ff; }
+.shelf[data-status="a_voir"] { --accent: #ffb04a; }
+.shelf[data-status="termine"] { --accent: #7fa0ff; }
+.shelf[data-status="abandonne"] { --accent: #8f8ab8; }
+.shelf-head { display: flex; align-items: baseline; gap: 0.9rem; margin-bottom: 1.5rem; }
+.shelf h2, .admin h2 {
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  font-size: 2.4rem;
+  line-height: 1;
+  margin: 0;
+  color: var(--bright);
+  text-shadow: 3px 3px 0 var(--night);
+}
+.count { letter-spacing: 0.25em; font-weight: 600; font-size: 0.75rem; color: var(--accent); }
+.rule {
+  flex: 1;
+  align-self: center;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 4px, transparent 4px 8px);
+  opacity: 0.6;
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 2rem 1.25rem;
+}
+.card h3 { font-size: 1rem; font-weight: 600; line-height: 1.3; margin: 0.75rem 0 0.1rem; color: #fff; text-wrap: pretty; }
+
+/* Couvertures de secours : un ciel par type, avec l'initiale illuminée */
+[data-type="film"] { --glow: #ff7a1a; --art: radial-gradient(circle at 50% 30%, #ffd27a 0 6%, #ff6a1a 16%, #6a1040 42%, #12082a 80%); }
+[data-type="serie"] { --glow: #5b6bff; --art: radial-gradient(circle at 70% 22%, #ffffff 0 3%, #8f9bff 8%, #3d3ccc 24%, #16124f 58%, #070620 90%); }
+[data-type="anime"] { --glow: #ff2fa8; --art: radial-gradient(ellipse at 50% 100%, #ff5fc4 0 10%, #8a1a9a 34%, #2a1a90 62%, #070620); }
+[data-type="manga"] { --glow: #a9a4ff; --art: radial-gradient(circle at 50% 35%, #e8e6ff 0 3%, #7d7aff 10%, #2a2590 34%, #0e0c38 70%, #050414); }
+[data-type="jeu"] { --glow: #4dffd0; --art: radial-gradient(circle at 30% 70%, #8affe0 0 3%, #2a7aff 20%, #3a1a90 52%, #070620 90%); }
+
+.cover { position: relative; aspect-ratio: 2 / 3; overflow: hidden; background: var(--art, var(--well)); border: 1px solid var(--seam); }
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), serif;
+  font-weight: 900;
+  font-size: 5rem;
+  color: #fff;
+  text-shadow: 0 0 20px var(--glow), 0 0 50px var(--glow);
+}
+.badge {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.65rem;
+  color: var(--text);
+  background: rgb(6 5 26 / 0.8);
+  padding: 0.15rem 0.35rem;
+}
+.badge.rating { left: auto; right: 6px; color: var(--night); background: var(--gilt); }
+
+/* Barre de progression : un filet néon au pied de la couverture */
+.bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgb(6 5 26 / 0.85); }
+.bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--neon);
+  transform-origin: left;
+  transform: scaleX(var(--p));
+}
+.meta { display: block; color: var(--ash); font-size: 0.85rem; margin: 0; }
+.progress { color: var(--rose); font-size: 0.85rem; margin: 0.2rem 0 0; }
+.notice { color: var(--mist); }
+.error { color: var(--blood); font-size: 0.875rem; }
+
+/* Formulaires */
+label { display: grid; gap: 0.3rem; font-size: 0.8rem; color: var(--ash); }
+input, select {
+  font: inherit;
+  color: #fff;
+  background: var(--night);
+  border: 1px solid var(--seam);
+  border-radius: 0;
+  padding: 0.55rem 0.6rem;
+}
+button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--night);
+  background: var(--gilt);
+  border: 1px solid var(--gilt);
+  border-radius: 0;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+}
+button:hover { background: #ffe39a; }
+button.ghost { background: transparent; color: var(--text); border-color: var(--seam); }
+button.ghost:hover { border-color: var(--hover); }
+button.danger { background: transparent; color: var(--blood); border-color: var(--blood); }
+button.danger:hover { background: var(--blood); color: var(--night); }
+button:disabled { opacity: 0.5; cursor: progress; }
+
+/* Admin */
+.admin-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 5.5rem 0 2.5rem;
+  min-height: 440px;
+}
+.admin-head h1 {
+  font-family: var(--font-display), serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 9vw, 6rem);
+  line-height: 0.9;
+  margin: 0;
+  color: var(--parchment);
+  text-shadow: 0 0 18px #6d7bff, 0 0 50px #3a3cff;
+}
+.admin section > h2 { margin-bottom: 0.5rem; }
+
+.add {
+  background: var(--panel);
+  border: 1px solid var(--seam);
+  backdrop-filter: blur(4px);
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+}
+.add h2 { font-size: 1.9rem; text-shadow: none; margin-bottom: 1rem; }
+.add-form { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; }
+.add-form .grow { flex: 1 1 16rem; }
+
+.results { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.5rem; }
+.result {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  font-weight: 400;
+  color: var(--text);
+  background: transparent;
+  border-color: var(--seam);
+  padding: 0.5rem;
+}
+.result:hover { background: transparent; border-color: var(--hover); }
+.result img, .thumb {
+  width: 2.75rem;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--art, var(--well));
+  border: 1px solid var(--seam);
+  font-family: var(--font-display), serif;
+  font-size: 1.7rem;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--glow, var(--night));
+}
+
+.rows { list-style: none; padding: 0; margin: 0; }
+.row { display: flex; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--seam-soft); }
+.row .thumb { width: 3.5rem; }
+.row[aria-busy="true"] { opacity: 0.6; }
+.row-main { flex: 1; min-width: 0; }
+.row-title { font-weight: 600; margin: 0; color: #fff; }
+.controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; margin-top: 0.7rem; }
+.controls label { font-size: 0.75rem; gap: 0.25rem; }
+.controls input, .controls select { padding: 0.4rem 0.5rem; font-size: 0.9rem; }
+.controls input[type="number"] { width: 5rem; }
+.controls .danger { margin-left: auto; padding: 0.45rem 0.9rem; font-size: 0.8rem; }
+.stepper { display: flex; align-items: center; gap: 0.5rem; }
+.stepper button { width: 2.3rem; height: 2.3rem; padding: 0; color: #fff; background: var(--well); border-color: var(--seam); }
+.stepper button:hover { border-color: var(--hover); }
+.stepper span { min-width: 10.5rem; text-align: center; font-size: 0.85rem; color: var(--rose); }
+
+.login { max-width: 28rem; padding-top: 8rem; }
+.login form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--seam);
+  backdrop-filter: blur(4px);
+}
+.login .title { text-shadow: 0 0 18px #6d7bff, 0 0 50px #3a3cff; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .bar::after { transition: transform 0.4s ease; }
+  .card { transition: transform 0.2s; }
+  .card:hover { transform: translateY(-4px); }
+}
