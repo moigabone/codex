@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Login() {
@@ -8,6 +8,11 @@ export default function Login() {
   const [code, setCode] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "verifying" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [linkFailed, setLinkFailed] = useState(false);
+
+  useEffect(() => {
+    setLinkFailed(new URLSearchParams(window.location.search).get("erreur") === "lien");
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,6 +67,12 @@ export default function Login() {
         </form>
       ) : (
         <form onSubmit={submit}>
+          {linkFailed && (
+            <p className="error">
+              Ce lien n’a pas pu te connecter : il est expiré ou s’est ouvert ailleurs que dans l’app.
+              Demande un nouveau mail et tape le code qu’il contient.
+            </p>
+          )}
           <label>
             Adresse e-mail
             <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
