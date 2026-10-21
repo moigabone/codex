@@ -1,0 +1,5 @@
+/* Sur le site, next/font définit ces variables ; ailleurs, elles pointent vers les @font-face de fonts/ */
+:root {
+  --font-display: "Grenze Gotisch";
+  --font-body: "Chakra Petch";
+}

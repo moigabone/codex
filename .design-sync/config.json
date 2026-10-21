@@ -1,0 +1,35 @@
+{
+  "projectId": "bf7851b0-253b-4f6f-8202-7636e52bd263",
+  "shape": "package",
+  "pkg": "codex",
+  "globalName": "Codex",
+  "entry": ".design-sync/entry.ts",
+  "srcDir": "components",
+  "tsconfig": "tsconfig.json",
+  "componentSrcMap": {
+    "MediaCard": "components/MediaCard.tsx",
+    "Sky": "components/Sky.tsx",
+    "AddMedia": null,
+    "MediaRow": null,
+    "SiteNav": null
+  },
+  "cssEntry": "app/globals.css",
+  "extraFonts": [
+    ".design-sync/fonts/fonts.css"
+  ],
+  "docsDir": ".design-sync/docs",
+  "dtsPropsFor": {
+    "MediaCard": "/** Le média à afficher (une ligne de la table media). */\n  media: {\n    id: string;\n    type: \"film\" | \"serie\" | \"anime\" | \"manga\" | \"jeu\";\n    status: \"en_cours\" | \"en_pause\" | \"a_voir\" | \"termine\" | \"abandonne\";\n    title: string;\n    cover_url: string | null;\n    year: number | null;\n    source: string;\n    external_id: string | null;\n    season: number | null;\n    progress: number;\n    progress_total: number | null;\n    rating: number | null;\n    notes: string | null;\n    updated_at: string;\n  };",
+    "Sky": "/* aucune prop : se place en premier enfant d’un conteneur .site */"
+  },
+  "overrides": {
+    "Sky": {
+      "cardMode": "single",
+      "viewport": "1200x620"
+    },
+    "MediaCard": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}
