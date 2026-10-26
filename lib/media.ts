@@ -63,6 +63,42 @@ export type SearchResult = {
   total: number | null;
 };
 
+export const SORTS = {
+  recent: "Récents",
+  note: "Note",
+  titre: "Titre",
+  annee: "Année",
+} as const;
+export type MediaSort = keyof typeof SORTS;
+
+export function isSort(value: string | undefined): value is MediaSort {
+  return !!value && value in SORTS;
+}
+
+// Titre comparable : sans accents, sans casse, espaces réduits
+export function normalizeTitle(title: string): string {
+  return title.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+// Identité d'un média pour repérer les doublons : l'identifiant TMDB/AniList, sinon le titre
+export function mediaKey(type: MediaType, source: string, externalId: string | null, title: string): string {
+  return source !== "manuel" && externalId
+    ? `${type}:${source}:${externalId}`
+    : `${type}:titre:${normalizeTitle(title)}`;
+}
+
+const byTitle = (a: Media, b: Media) => a.title.localeCompare(b.title, "fr", { sensitivity: "base" });
+const COMPARE: Record<MediaSort, (a: Media, b: Media) => number> = {
+  recent: (a, b) => b.updated_at.localeCompare(a.updated_at),
+  note: (a, b) => (b.rating ?? 0) - (a.rating ?? 0) || byTitle(a, b),
+  titre: byTitle,
+  annee: (a, b) => (b.year ?? 0) - (a.year ?? 0) || byTitle(a, b),
+};
+
+export function sortMedia(list: Media[], sort: MediaSort): Media[] {
+  return [...list].sort(COMPARE[sort]);
+}
+
 export function progressText(m: Media): string | null {
   const unit = UNIT[m.type];
   if (!unit) return null;

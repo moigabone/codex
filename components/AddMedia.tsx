@@ -3,9 +3,11 @@
 
 import { useState, useTransition } from "react";
 import { addMedia } from "@/app/admin/actions";
-import { TYPE_SINGULAR, TYPES, type MediaType, type SearchResult } from "@/lib/media";
+import { TYPE_SINGULAR, TYPES, mediaKey, type MediaType, type SearchResult } from "@/lib/media";
 
-export function AddMedia() {
+export function AddMedia({ existing }: { existing: string[] }) {
+  const owned = new Set(existing);
+  const isOwned = (r: SearchResult) => owned.has(mediaKey(type, r.source, r.externalId || null, r.title));
   const [type, setType] = useState<MediaType>("anime");
   const [q, setQ] = useState("");
   const [cover, setCover] = useState("");
@@ -17,6 +19,7 @@ export function AddMedia() {
   const searchable = type !== "jeu"; // les jeux s'ajoutent à la main pour l'instant
 
   function add(r: SearchResult) {
+    if (isOwned(r)) return setMessage(`${r.title} est déjà dans ta liste.`);
     start(async () => {
       const { error } = await addMedia({
         type,
@@ -104,20 +107,24 @@ export function AddMedia() {
 
       {results.length > 0 && (
         <ul className="results">
-          {results.map((r) => (
-            <li key={`${r.source}-${r.externalId}`}>
-              <button type="button" className="result" onClick={() => add(r)} disabled={pending}>
-                {r.cover ? <img src={r.cover} alt="" /> : <span className="thumb" />}
-                <span>
-                  {r.title}
-                  <span className="meta">
-                    {r.year ?? "Année inconnue"}
-                    {r.total ? `, ${r.total} ${type === "manga" ? "chapitres" : "épisodes"}` : ""}
+          {results.map((r) => {
+            const already = isOwned(r);
+            return (
+              <li key={`${r.source}-${r.externalId}`}>
+                <button type="button" className="result" onClick={() => add(r)} disabled={pending || already}>
+                  {r.cover ? <img src={r.cover} alt="" /> : <span className="thumb" />}
+                  <span>
+                    {r.title}
+                    <span className="meta">
+                      {r.year ?? "Année inconnue"}
+                      {r.total ? `, ${r.total} ${type === "manga" ? "chapitres" : "épisodes"}` : ""}
+                    </span>
                   </span>
-                </span>
-              </button>
-            </li>
-          ))}
+                  {already && <span className="owned">Déjà dans ta liste</span>}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { MediaInput, MediaPatch } from "@/lib/media";
+import { mediaKey, type MediaInput, type MediaPatch } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
 
 type Result = { error?: string };
@@ -35,6 +35,18 @@ function refresh() {
 export async function addMedia(input: MediaInput): Promise<Result> {
   const supabase = await authedClient();
   if (!supabase) return { error: "Session expirée, reconnecte-toi." };
+
+  // Pas de doublon : même identifiant TMDB/AniList, ou même titre pour un ajout manuel
+  const { data: sameType, error: readError } = await supabase
+    .from("media")
+    .select("type, source, external_id, title")
+    .eq("type", input.type);
+  if (readError) return { error: readError.message };
+  const key = mediaKey(input.type, input.source ?? "manuel", input.external_id ?? null, input.title);
+  if (sameType.some((m) => mediaKey(m.type, m.source, m.external_id, m.title) === key)) {
+    return { error: `${input.title} est déjà dans ta liste.` };
+  }
+
   const { error } = await supabase.from("media").insert(clean(input));
   if (error) return { error: error.message };
   refresh();

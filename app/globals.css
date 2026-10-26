@@ -101,14 +101,37 @@ a:hover { color: var(--hover); }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem 1.75rem;
+  gap: 0.5rem 2rem;
   padding: 0.85rem 1.1rem;
   margin: 2rem 0 3.5rem;
   background: var(--panel);
   border: 1px solid var(--seam);
   backdrop-filter: blur(4px);
 }
-.filters a { font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+.filters > nav, .filters > [role="group"] { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.75rem; }
+.filters a, .filters button { font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+/* Les filtres de la gestion sont des boutons : même apparence que les liens */
+.filters button {
+  color: var(--ash);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0.3rem 0;
+}
+.filters button:hover { color: #fff; background: transparent; }
+.filters button[aria-pressed="true"] { color: #fff; border-bottom-color: var(--neon); }
+.sorts { margin-left: auto; gap: 0.25rem 1.25rem !important; }
+.sorts > span { color: var(--mist); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; }
+.filters .search { flex: 1 1 100%; }
+.filters .search input { width: 100%; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
 /* Étagères par statut, chacune avec sa couleur */
 .shelf { --accent: var(--ash); margin-bottom: 4rem; }
@@ -135,6 +158,23 @@ a:hover { color: var(--hover); }
   background: repeating-linear-gradient(90deg, var(--accent) 0 4px, transparent 4px 8px);
   opacity: 0.6;
 }
+/* Étagère repliable : clic sur le titre, flèche à la couleur du statut */
+.shelf > summary { list-style: none; cursor: pointer; }
+.shelf > summary::-webkit-details-marker { display: none; }
+.shelf > summary::after {
+  content: "";
+  align-self: center;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin: 0 0.3rem 0.25rem;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg);
+}
+.shelf:not([open]) > summary::after { transform: rotate(-45deg); margin-bottom: 0; }
+.shelf:not([open]) { margin-bottom: 2rem; }
+.shelf:not([open]) > summary { margin-bottom: 0; opacity: 0.75; }
+.shelf > summary:hover { opacity: 1; }
 
 .grid {
   list-style: none;
@@ -268,6 +308,7 @@ button:disabled { opacity: 0.5; cursor: progress; }
   padding: 0.5rem;
 }
 .result:hover { background: transparent; border-color: var(--hover); }
+.result .owned { margin-left: auto; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gilt); }
 .result img, .thumb {
   width: 2.75rem;
   aspect-ratio: 2 / 3;
@@ -315,4 +356,5 @@ button:disabled { opacity: 0.5; cursor: progress; }
   .bar::after { transition: transform 0.4s ease; }
   .card { transition: transform 0.2s; }
   .card:hover { transform: translateY(-4px); }
+  .shelf > summary::after { transition: transform 0.2s; }
 }

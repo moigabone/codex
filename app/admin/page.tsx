@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { AddMedia } from "@/components/AddMedia";
-import { MediaRow } from "@/components/MediaRow";
+import { AdminList } from "@/components/AdminList";
 import { SiteNav } from "@/components/SiteNav";
-import type { Media } from "@/lib/media";
+import { mediaKey, type Media } from "@/lib/media";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./actions";
 
@@ -29,21 +29,11 @@ export default async function Admin() {
         </form>
       </header>
 
-      <AddMedia />
+      <AddMedia existing={media.map((m) => mediaKey(m.type, m.source, m.external_id, m.title))} />
 
       <section>
         <h2>Ma liste</h2>
-        {media.length === 0 ? (
-          <p className="notice">Ajoute ton premier média avec la recherche ci-dessus.</p>
-        ) : (
-          <ul className="rows">
-            {media.map((m) => (
-              <li key={m.id}>
-                <MediaRow media={m} />
-              </li>
-            ))}
-          </ul>
-        )}
+        <AdminList media={media} />
       </section>
     </main>
   );
