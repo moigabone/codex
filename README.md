@@ -5,13 +5,13 @@ Next.js (App Router) + Supabase (Postgres, authentification, RLS).
 
 - `/` : page publique, classée par statut, filtrable par type
 - `/admin` : ajout (recherche TMDB / AniList ou saisie manuelle) et suivi de progression
-- `/login` : connexion par lien magique, réservée à ton compte
+- `/login` : connexion par code e-mail, réservée à ton compte
 
 ## Mise en route
 
 1. **Supabase** : crée un projet sur supabase.com, puis exécute `supabase/schema.sql` dans le SQL Editor.
-2. **Verrouiller l'accès** : dans Authentication, désactive les inscriptions (« Allow new users to sign up »),
-   puis crée ton utilisateur à la main (Users > Add user) avec ton adresse e-mail.
+2. **Verrouiller l'accès** : laisse les inscriptions activées (la Veille en a besoin pour ses invités), puis crée ton utilisateur
+   à la main (Users > Add user) et donne-lui le droit d'écrire : `veille/supabase/comptes.sql` ajoute `"codex": true` à son `app_metadata`.
    Dans URL Configuration, ajoute `http://localhost:3000/auth/callback` et ton URL de prod aux Redirect URLs.
 3. **TMDB** : crée un compte sur themoviedb.org et récupère le jeton d'accès en lecture (API v4).
 4. **Variables** : copie `.env.example` en `.env.local` et remplis-le.
@@ -25,8 +25,8 @@ Pense à ajouter `https://codex.gabin-clavier.fr/auth/callback` dans les Redirec
 
 ## Sécurité
 
-- Lecture publique, écriture uniquement par le propriétaire de la ligne (RLS Postgres).
-- Inscriptions désactivées + `shouldCreateUser: false` : personne d'autre ne peut se créer un compte.
+- Lecture publique ; écriture réservée au compte qui a `"codex": true` dans son `app_metadata` (RLS Postgres).
+- `shouldCreateUser: false` : le Codex ne crée aucun compte. Les inscriptions restent ouvertes pour la Veille, mais un hook Supabase les refuse sans code d'invitation, et un invité n'a pas le droit d'écrire ici.
 - La recherche (`/api/search`) exige d'être connecté pour protéger le quota TMDB.
 - Le champ `notes` est lisible publiquement : n'y mets rien de privé.
 

@@ -50,7 +50,7 @@ export default function Login() {
       <h1 className="title small">Codex</h1>
       {state === "sent" || state === "verifying" ? (
         <form onSubmit={verify}>
-          <p>Mail envoyé à {email}. Ouvre le lien, ou tape ici le code reçu.</p>
+          <p>Code envoyé à {email}. Tape-le ici.</p>
           <label>
             Code
             <input
@@ -78,7 +78,7 @@ export default function Login() {
             <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
           <button disabled={state === "sending"}>
-            {state === "sending" ? "Envoi…" : "Recevoir un lien de connexion"}
+            {state === "sending" ? "Envoi…" : "Recevoir un code de connexion"}
           </button>
           {state === "error" && <p className="error">{message}</p>}
         </form>
